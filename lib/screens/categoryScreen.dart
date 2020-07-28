@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wowpaper/constants/colors.dart';
 import 'package:wowpaper/constants/constants.dart';
+import 'package:wowpaper/functions/navigate.dart';
 import 'package:wowpaper/functions/request.dart';
+import 'package:wowpaper/screens/downloadScreen.dart';
 import 'package:wowpaper/widgets/customText.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -22,28 +24,33 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     response['data'].forEach((e) {
       widgetList.add(
-          Card(
-            child: Container(
-              width: 170,
-              height: 170,
-              color: primaryColor,
-              child: Image.network(
-                e['path'],
-                fit: BoxFit.cover,
-                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress){
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes
-                          : null,
-                    ),
-                  );
-                },
+        GestureDetector(
+          onTap: (){
+            navigate(context: context, route: DownloadScreen(imagePath: e['path']));
+          },
+          child: Card(
+              child: Container(
+                width: 170,
+                height: 170,
+                color: primaryColor,
+                child: Image.network(
+                  e['path'],
+                  fit: BoxFit.cover,
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress){
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes
+                            : null,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-          )
+        )
       );
     });
 
@@ -73,14 +80,23 @@ class _CategoryScreenState extends State<CategoryScreen> {
           future: getImages(),
           builder: (context, snapshot){
             if(snapshot.hasData){
-              return ListView(
-                children: <Widget>[
-                  Wrap(
-                    runSpacing: 10,
-                    children: cardWidget,
-                  )
-                ],
-              );
+              if(cardWidget.length != 0){
+                return ListView(
+                  children: <Widget>[
+                    Wrap(
+                      runSpacing: 10,
+                      children: cardWidget,
+                    )
+                  ],
+                );
+              }else{
+                return Center(
+                  child: CustomText(
+                    text: 'Nada aqui',
+                    size: 30,
+                  ),
+                );
+              }
             }else{
               return Center(
                 child: CircularProgressIndicator(),

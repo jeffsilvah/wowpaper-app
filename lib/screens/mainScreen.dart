@@ -4,9 +4,11 @@ import 'package:wowpaper/constants/colors.dart';
 import 'package:wowpaper/constants/constants.dart';
 import 'package:wowpaper/functions/navigate.dart';
 import 'package:wowpaper/functions/request.dart';
+import 'package:wowpaper/screens/favoriteScreen.dart';
 import 'package:wowpaper/widgets/customText.dart';
 
 import 'categoryScreen.dart';
+import 'downloadScreen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -23,27 +25,35 @@ class _MainScreenState extends State<MainScreen> {
 
     response['data'].forEach((e) {
       widgetList.add(
-        Container(
-            width: MediaQuery.of(context).size.width,
-            child: Card(
-              color: primaryColor,
-              child: Image.network(
-                e['path'],
-                fit: BoxFit.cover,
-                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress){
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes
-                          : null,
-                    ),
-                  );
-                },
+        GestureDetector(
+          onTap: (){
+            navigate(context: context, route: DownloadScreen(imagePath: e['path']));
+          },
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: Card(
+                color: primaryColor,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    e['path'],
+                    fit: BoxFit.cover,
+                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress){
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
-      )
+      ),
+        )
       );
     });
 
@@ -106,7 +116,16 @@ class _MainScreenState extends State<MainScreen> {
               Icons.help,
             ),
             iconSize: 30,
-          )
+          ),
+          IconButton(
+            onPressed: (){
+              navigate(context: context, route: FavoriteScreen());
+            },
+            icon: Icon(
+              Icons.favorite,
+            ),
+            iconSize: 30,
+          ),
         ],
       ),
       drawer: Drawer(
