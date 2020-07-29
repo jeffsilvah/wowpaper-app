@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wowpaper/constants/colors.dart';
-import 'package:wowpaper/functions/navigate.dart';
 import 'package:wowpaper/functions/setFavorite.dart';
 import 'package:wowpaper/functions/sharedPreferences.dart';
-import 'package:wowpaper/screens/mainScreen.dart';
 import 'package:wowpaper/widgets/customCircleButton.dart';
 import 'package:wowpaper/widgets/customText.dart';
+import 'package:image_downloader/image_downloader.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class DownloadScreen extends StatefulWidget {
   final String imagePath;
@@ -44,6 +45,55 @@ class _DownloadScreenState extends State<DownloadScreen> {
     setItem(key: 'favorite', value: favoriteImageList);
   }
 
+  void downloadImage({path}) async {
+    try{
+      var imageId = await ImageDownloader.downloadImage(
+          path,
+          destination: AndroidDestinationType.directoryPictures
+      );
+
+      if(imageId == null) return;
+
+      var imgPath = await ImageDownloader.findPath(imageId);
+      await ImageDownloader.open(imgPath);
+
+    }on PlatformException catch(e){
+      print(e);
+    }
+  }
+
+  void showDialog({context}) async {
+    ProgressDialog dialog = ProgressDialog(context);
+
+    dialog = ProgressDialog(
+      context,
+      type: ProgressDialogType.Normal,
+      isDismissible: false,
+      showLogs: true,
+    );
+
+    dialog.style(
+      progressWidget: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+        ),
+      ),
+      message: 'Baixando imagem',
+      messageTextStyle: TextStyle(
+        fontFamily: 'Saira',
+        color: primaryColor,
+        fontSize: 17
+      ),
+    );
+
+    await dialog.show();
+
+    Future.delayed(Duration(seconds: 10), (){
+      dialog.hide();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +121,10 @@ class _DownloadScreenState extends State<DownloadScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 CustomCircleButton(
-                  onTap: (){},
+                  onTap: (){
+                    downloadImage(path: widget.imagePath);
+                    showDialog(context: context);
+                  },
                   iconSize: 35,
                   icon: Icons.get_app,
                   blurColor: primaryColor,

@@ -111,13 +111,6 @@ class _MainScreenState extends State<MainScreen> {
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: (){},
-            icon: Icon(
-              Icons.help,
-            ),
-            iconSize: 30,
-          ),
-          IconButton(
             onPressed: (){
               navigate(context: context, route: FavoriteScreen());
             },
