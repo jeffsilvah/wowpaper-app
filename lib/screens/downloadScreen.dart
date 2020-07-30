@@ -28,12 +28,15 @@ class _DownloadScreenState extends State<DownloadScreen> {
     super.initState();
 
     getItem(key: 'favorite').then((value) {
-      favoriteImageList = value;
-      if(favoriteImageList.contains(widget.imagePath)){
-        setState(() {
-          favorite = true;
-        });
+      if(value != null){
+        favoriteImageList = value;
+        if(favoriteImageList.contains(widget.imagePath)){
+          setState(() {
+            favorite = true;
+          });
+        }
       }
+
     });
 
   }
@@ -68,7 +71,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
     dialog = ProgressDialog(
       context,
       type: ProgressDialogType.Normal,
-      isDismissible: false,
+      isDismissible: true,
       showLogs: true,
     );
 
@@ -79,7 +82,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
           valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
         ),
       ),
-      message: 'Baixando imagem',
+      message: 'Downloading image',
       messageTextStyle: TextStyle(
         fontFamily: 'Saira',
         color: primaryColor,

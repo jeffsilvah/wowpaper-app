@@ -92,7 +92,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               }else{
                 return Center(
                   child: CustomText(
-                    text: 'Nada aqui',
+                    text: 'Nothing here',
                     size: 30,
                   ),
                 );

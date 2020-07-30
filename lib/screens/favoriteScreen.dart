@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:wowpaper/constants/colors.dart';
+import 'package:wowpaper/functions/loadingAnimation.dart';
 import 'package:wowpaper/functions/navigate.dart';
 import 'package:wowpaper/functions/sharedPreferences.dart';
 import 'package:wowpaper/screens/downloadScreen.dart';
@@ -96,14 +97,14 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               }else{
                 return Center(
                   child: CustomText(
-                    text: 'Nada aqui',
+                    text: 'Nothing here',
                     size: 30,
                   ),
                 );
               }
             }else{
               return Center(
-                child: CircularProgressIndicator(),
+                child: loadingAnimation(radius: 100, size: 50),
               );
             }
           },
