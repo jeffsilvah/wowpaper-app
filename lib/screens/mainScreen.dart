@@ -7,6 +7,9 @@ import 'package:wowpaper/functions/navigate.dart';
 import 'package:wowpaper/functions/request.dart';
 import 'package:wowpaper/screens/favoriteScreen.dart';
 import 'package:wowpaper/widgets/customText.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:admob_flutter/admob_flutter.dart';
+import 'package:wowpaper/services/admobService.dart';
 
 import 'categoryScreen.dart';
 import 'downloadScreen.dart';
@@ -17,12 +20,14 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final ams = AdmobService();
+
   List<Widget> imageWidgetList;
   List<Widget> drawerList;
-  List<Widget> category1 = [Container()];
-  List<Widget> category2 = [Container()];
-  List<Widget> category3 = [Container()];
-  List<Widget> category4 = [Container()];
+  List<Widget> natureList;
+  List<Widget> seaList;
+  List<Widget> universeList;
+  List<Widget> winterList;
 
   Future getImages() async {
     List<Widget> widgetList = [];
@@ -40,14 +45,13 @@ class _MainScreenState extends State<MainScreen> {
             color: primaryColor,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                e['path'],
+              child: CachedNetworkImage(
+                imageUrl: e['path'],
                 fit: BoxFit.cover,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return loadingAnimation(size: 200, radius: 100.0);
+                progressIndicatorBuilder: (context, url, downloadProgress){
+                  return loadingAnimation(size: 100, radius: 50);
                 },
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
             ),
           ),
@@ -95,9 +99,8 @@ class _MainScreenState extends State<MainScreen> {
     return response;
   }
 
-  Future getImageByCategory({categoryUuid, List list, limit}) async {
-    var response = await request(
-        url: '$url/data/category/?category_uuid=$categoryUuid&limit=$limit');
+  Future getNatureImages() async {
+    var response = await request(url: '$url/data/category/?category_uuid=$natureCategory&limit=6');
     List<Widget> widgetList = [];
 
     response['data'].forEach((e) {
@@ -111,29 +114,137 @@ class _MainScreenState extends State<MainScreen> {
                 width: 170,
                 height: 170,
                 color: primaryColor,
-                child: Image.network(
-                  e['path'],
+                child: CachedNetworkImage(
+                  imageUrl: e['path'],
                   fit: BoxFit.cover,
-                  loadingBuilder: (BuildContext context, Widget child,
-                      ImageChunkEvent loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes
-                            : null,
-                      ),
-                    );
+                  progressIndicatorBuilder: (context, url, downloadProgress){
+                    return loadingAnimation(size: 100, radius: 50);
                   },
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
 
-      ),
+            ),
           ));
     });
 
-    return widgetList;
+
+
+    natureList = widgetList;
+
+    return response;
+  }
+  Future getSeaImages() async {
+    var response = await request(url: '$url/data/category/?category_uuid=$seaCategory&limit=6');
+    List<Widget> widgetList = [];
+
+    response['data'].forEach((e) {
+      widgetList.add(
+          GestureDetector(
+            onTap: (){
+              navigate(context: context, route: DownloadScreen(imagePath: e['path']));
+            },
+            child: Card(
+              child: Container(
+                width: 170,
+                height: 170,
+                color: primaryColor,
+                child: CachedNetworkImage(
+                  imageUrl: e['path'],
+                  fit: BoxFit.cover,
+                  progressIndicatorBuilder: (context, url, downloadProgress){
+                    return loadingAnimation(size: 100, radius: 50);
+                  },
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
+              ),
+
+            ),
+          ));
+    });
+
+
+
+    seaList = widgetList;
+
+    return response;
+  }
+  Future getUniverseImages() async {
+    var response = await request(url: '$url/data/category/?category_uuid=$universeCategory&limit=6');
+    List<Widget> widgetList = [];
+
+    response['data'].forEach((e) {
+      widgetList.add(
+          GestureDetector(
+            onTap: (){
+              navigate(context: context, route: DownloadScreen(imagePath: e['path']));
+            },
+            child: Card(
+              child: Container(
+                width: 170,
+                height: 170,
+                color: primaryColor,
+                child: CachedNetworkImage(
+                  imageUrl: e['path'],
+                  fit: BoxFit.cover,
+                  progressIndicatorBuilder: (context, url, downloadProgress){
+                    return loadingAnimation(size: 100, radius: 50);
+                  },
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
+              ),
+
+            ),
+          ));
+    });
+
+
+
+    universeList = widgetList;
+
+    return response;
+  }
+  Future getWinterImages() async {
+    var response = await request(url: '$url/data/category/?category_uuid=$winterCategory&limit=6');
+    List<Widget> widgetList = [];
+
+    response['data'].forEach((e) {
+      widgetList.add(
+          GestureDetector(
+            onTap: (){
+              navigate(context: context, route: DownloadScreen(imagePath: e['path']));
+            },
+            child: Card(
+              child: Container(
+                width: 170,
+                height: 170,
+                color: primaryColor,
+                child: CachedNetworkImage(
+                  imageUrl: e['path'],
+                  fit: BoxFit.cover,
+                  progressIndicatorBuilder: (context, url, downloadProgress){
+                    return loadingAnimation(size: 100, radius: 50);
+                  },
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
+              ),
+
+            ),
+          ));
+    });
+
+
+
+    winterList = widgetList;
+
+    return response;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Admob.initialize(ams.getAdmobAppId());
   }
 
   @override
@@ -199,64 +310,88 @@ class _MainScreenState extends State<MainScreen> {
                 },
               ),
             ),
-            SizedBox(height: 30),
-            buildFutureBuilder(
-                limit: 6, list: category1, text: 'Nature', uuid: category1Uuid),
-            SizedBox(height: 30),
-            buildFutureBuilder(
-                limit: 6, list: category2, text: 'Sea', uuid: category2Uuid),
-            SizedBox(height: 30),
-            buildFutureBuilder(
-                limit: 6,
-                list: category3,
-                text: 'Universe',
-                uuid: category3Uuid),
-            SizedBox(height: 30),
-            buildFutureBuilder(
-                limit: 6, list: category4, text: 'Winter', uuid: category4Uuid),
+            SizedBox(height: 20),
+            AdmobBanner(
+              adUnitId: ams.getBannerAdId(),
+              adSize: AdmobBannerSize.FULL_BANNER,
+            ),
+            SizedBox(height: 20),
+            CustomText(text: 'Nature', align: TextAlign.center, size: 20),
+            SizedBox(height: 10),
+            Container(
+              child: FutureBuilder(
+                future: getNatureImages(),
+                builder: (context, snapshot){
+                  if(snapshot.hasData){
+                    return Wrap(
+                      children: natureList,
+                    );
+                  }else{
+                    return loadingAnimation(size: 100, radius: 50.0);
+                  }
+                },
+              ),
+            ),
+            SizedBox(height: 20),
+            CustomText(text: 'Sea', align: TextAlign.center, size: 20),
+            SizedBox(height: 10),
+            Container(
+              child: FutureBuilder(
+                future: getSeaImages(),
+                builder: (context, snapshot){
+                  if(snapshot.hasData){
+                    return Wrap(
+                      children: seaList,
+                    );
+                  }else{
+                    return loadingAnimation(size: 100, radius: 50.0);
+                  }
+                },
+              ),
+            ),
+            SizedBox(height: 20),
+            CustomText(text: 'Universe', align: TextAlign.center, size: 20),
+            SizedBox(height: 10),
+            Container(
+              child: FutureBuilder(
+                future: getUniverseImages(),
+                builder: (context, snapshot){
+                  if(snapshot.hasData){
+                    return Wrap(
+                      children: universeList,
+                    );
+                  }else{
+                    return loadingAnimation(size: 100, radius: 50.0);
+                  }
+                },
+              ),
+            ),
+            SizedBox(height: 20),
+            CustomText(text: 'Winter', align: TextAlign.center, size: 20),
+            SizedBox(height: 10),
+            Container(
+              child: FutureBuilder(
+                future: getWinterImages(),
+                builder: (context, snapshot){
+                  if(snapshot.hasData){
+                    return Wrap(
+                      children: winterList,
+                    );
+                  }else{
+                    return loadingAnimation(size: 100, radius: 50.0);
+                  }
+                },
+              ),
+            ),
+            SizedBox(height: 20),
+            AdmobBanner(
+              adUnitId: ams.getBannerAdId(),
+              adSize: AdmobBannerSize.FULL_BANNER,
+            ),
           ],
         ),
       ),
     );
   }
 
-  FutureBuilder buildFutureBuilder({uuid, list, text, limit}) {
-    return FutureBuilder(
-      future: getImageByCategory(categoryUuid: uuid, list: list, limit: limit),
-      builder: (context, snapshot) {
-        getImageByCategory(categoryUuid: uuid, list: list, limit: limit)
-            .then((value) {
-          list = value;
-        });
-
-        if (snapshot.hasData) {
-          return Column(
-            children: <Widget>[
-              GestureDetector(
-                onTap: (){
-                  navigate(
-                    context: context,
-                    route: CategoryScreen(categoryInfo: {
-                      'uuid': uuid,
-                      'category': text
-                    })
-                  );
-                },
-                child: CustomText(
-                  text: text,
-                  size: 19,
-                ),
-              ),
-              SizedBox(height: 5),
-              Wrap(
-                children: list,
-              ),
-            ],
-          );
-        } else {
-          return loadingAnimation(size: 50, radius: 25);
-        }
-      },
-    );
-  }
 }

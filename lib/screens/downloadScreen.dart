@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wowpaper/constants/colors.dart';
+import 'package:wowpaper/functions/loadingAnimation.dart';
 import 'package:wowpaper/functions/setFavorite.dart';
 import 'package:wowpaper/functions/sharedPreferences.dart';
 import 'package:wowpaper/widgets/customCircleButton.dart';
 import 'package:wowpaper/widgets/customText.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:admob_flutter/admob_flutter.dart';
+import 'package:wowpaper/services/admobService.dart';
 
 class DownloadScreen extends StatefulWidget {
   final String imagePath;
@@ -18,6 +21,7 @@ class DownloadScreen extends StatefulWidget {
 }
 
 class _DownloadScreenState extends State<DownloadScreen> {
+  final ams = AdmobService();
   List<String> favoriteImageList = [];
   Color whiteColor = Color(0xffFFFFFF);
   Color redColor = Color(0xffCE4B4B);
@@ -38,6 +42,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
       }
 
     });
+
+    Admob.initialize(ams.getAdmobAppId());
 
   }
 
@@ -102,7 +108,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
     return Scaffold(
       appBar: AppBar(
         title: CustomText(
-          text: 'Voltar',
+          text: 'Back',
         ),
       ),
       body: Container(
@@ -115,7 +121,14 @@ class _DownloadScreenState extends State<DownloadScreen> {
                 elevation: 5,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.network(widget.imagePath, fit: BoxFit.cover),
+                  child: Image.network(
+                    widget.imagePath,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress){
+                      if (loadingProgress == null) return child;
+                      return loadingAnimation(size: 100, radius: 50);
+                    },
+                  ),
                 ),
               ),
             ),
@@ -150,6 +163,11 @@ class _DownloadScreenState extends State<DownloadScreen> {
                   iconColor: !favorite ? whiteColor : redColor,
                 ),
               ],
+            ),
+            SizedBox(height: 20),
+            AdmobBanner(
+              adUnitId: ams.getBannerAdId(),
+              adSize: AdmobBannerSize.FULL_BANNER,
             ),
           ],
         ),

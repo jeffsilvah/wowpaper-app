@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:wowpaper/constants/colors.dart';
 import 'package:wowpaper/functions/loadingAnimation.dart';
@@ -6,6 +7,7 @@ import 'package:wowpaper/functions/navigate.dart';
 import 'package:wowpaper/functions/sharedPreferences.dart';
 import 'package:wowpaper/screens/downloadScreen.dart';
 import 'package:wowpaper/widgets/customText.dart';
+import 'package:wowpaper/services/admobService.dart';
 
 class FavoriteScreen extends StatefulWidget {
   @override
@@ -14,11 +16,18 @@ class FavoriteScreen extends StatefulWidget {
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
   List<Widget> cardWidget;
+  final ams = AdmobService();
 
   Future getImages() async {
     List<Widget> widgetList = [];
 
     getItem(key: 'favorite').then((value) {
+      if(value.length != 0){
+        widgetList.insert(0, AdmobBanner(
+          adUnitId: ams.getBannerAdId(),
+          adSize: AdmobBannerSize(height: 170, width: 170, name: 'ads'),
+        ));
+      }
 
       value.forEach((e) {
         widgetList.add(
@@ -54,9 +63,20 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
     });
 
+
+    print('Length ${widgetList.length}');
+
+
     cardWidget = widgetList;
 
     return cardWidget;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Admob.initialize(ams.getAdmobAppId());
   }
 
   @override
@@ -64,7 +84,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     return Scaffold(
       appBar: AppBar(
         title: CustomText(
-          text: 'Favoritos',
+          text: 'Favorites',
 
         ),
         actions: <Widget>[
@@ -91,14 +111,24 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     Wrap(
                       runSpacing: 10,
                       children: cardWidget,
-                    )
+                    ),
                   ],
                 );
               }else{
                 return Center(
-                  child: CustomText(
-                    text: 'Nothing here',
-                    size: 30,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CustomText(
+                        text: 'Nothing here',
+                        size: 30,
+                      ),
+                      SizedBox(height: 20),
+                      AdmobBanner(
+                        adUnitId: ams.getBannerAdId(),
+                        adSize: AdmobBannerSize.MEDIUM_RECTANGLE,
+                      )
+                    ],
                   ),
                 );
               }

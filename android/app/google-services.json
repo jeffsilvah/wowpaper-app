@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1015193756490",
+    "firebase_url": "https://wowpaper-da145.firebaseio.com",
+    "project_id": "wowpaper-da145",
+    "storage_bucket": "wowpaper-da145.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015193756490:android:bb86a3ceb3a94ee81c17b3",
+        "android_client_info": {
+          "package_name": "com.oitobits.wowpaper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1015193756490-bc1a1b2adg9j34i03p80jg978oes7000.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCO3kW7ZuIPRDnq-wiUduLLzWnggKFozeQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1015193756490-bc1a1b2adg9j34i03p80jg978oes7000.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
